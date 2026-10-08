@@ -6,7 +6,7 @@ const MODES = { car: 'DRIVE', walk: 'WALK', transit: 'TRANSIT' };
 export function createGoogleRoutes({ apiKey = process.env.GOOGLE_MAPS_API_KEY, fetchImpl = fetch, budget = routeBudget, allowPaidRequests = false } = {}) {
   return async function route({ origin, destination, mode, departureAt }) {
     if (!apiKey) throw new RouteError('Configure GOOGLE_MAPS_API_KEY no servidor e habilite a Routes API no Google Cloud para calcular trajetos reais.', 503);
-    if (!allowPaidRequests) throw new RouteError('Consultas ao Google estão bloqueadas para evitar cobranças. A versão gratuita precisa de outra fonte de rotas.', 503);
+    if (!allowPaidRequests) throw new RouteError('Consultas ao Google estão desativadas no servidor para controlar custos.', 503);
     if (!MODES[mode]) throw new RouteError('Meio de transporte inválido.', 400);
     const body = {
       origin: { address: origin }, destination: { address: destination },

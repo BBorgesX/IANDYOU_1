@@ -6,9 +6,9 @@ Encontros com ponto fixo, convites privados e confirmação de saída entre dois
 
 ## Estado atual e custo
 
-O objetivo é um produto com cálculo automático inclusive para ônibus e metrô. O Google é uma opção aceita, mas o protótipo precisa controlar custos antes de habilitar consultas. **As consultas ao Google estão bloqueadas no servidor**, mesmo quando a chave está presente, antes de reservar quota ou fazer uma requisição. A interface ainda informa que uma alternativa gratuita está em preparação. A publicação inicial permite validar a hospedagem, mas não oferece cálculo de rotas reais enquanto a integração estiver bloqueada.
+O protótipo calcula rotas automáticas de carro, caminhada e transporte público com Google Routes quando a integração está configurada. **Consultas ficam desativadas por padrão**, mesmo com chave presente. A ativação exige `GOOGLE_ROUTES_ENABLED=true`, `GOOGLE_MAPS_API_KEY` no servidor e saldo no limite `ROUTES_DAILY_LIMIT`. [Ativação e controle de custo no Render](docs/RENDER.md#ativar-google-maps-para-um-teste-pequeno).
 
-A próxima etapa da integração é verificar a franquia aplicável na conta Google e configurar cotas no provedor antes de liberar consultas. Uma alternativa sem Google para transporte público depende de dados oficiais da cidade, como feeds GTFS; sua disponibilidade ainda não foi verificada.
+Para o teste, configure cotas no projeto Google antes de liberar consultas. O contador local não é um limite de faturamento: no Render Free ele pode ser apagado após reiniciar ou publicar. A disponibilidade de ônibus e metrô depende dos dados do Google na região. Não há promessa de custo zero nem de acompanhamento contínuo por GPS.
 
 A proteção se aplica ao servidor atualizado. O bloqueio não altera outras cópias do aplicativo nem aplicativos no mesmo projeto Google.
 
@@ -23,7 +23,7 @@ npm run check
 npm run build
 ```
 
-Porta padrão: 3000; `PORT=3002 npm start` usa outra porta. O servidor utiliza o proxy de rede do ambiente quando houver. `/api/config` informa `paidGoogleDisabled: true` no servidor padrão. `npm test` usa respostas controladas; o teste do bloqueio confirma zero requisições e zero reservas de quota, mesmo com uma chave presente.
+Porta padrão: 3000; `PORT=3002 npm start` usa outra porta. O servidor utiliza o proxy de rede do ambiente quando houver. `/api/config` informa `paidGoogleDisabled: true` enquanto a ativação estiver desligada ou não houver chave. `npm test` usa respostas controladas, incluindo a integração HTTP de carro e transporte público; os testes de bloqueio confirmam zero consultas com chave presente sem ativação, sem chave ou com limite zero.
 
 `dist/MeetSync.html` reúne a interface, mas o encontro entre aparelhos requer servidor. Não há publicação pública automática. Hospedagem gratuita e disponibilidade permanente não são garantias equivalentes; cada serviço tem suas próprias limitações.
 
@@ -33,8 +33,8 @@ Um encontro tem duas origens, destino fixo e transportes. Cada participante poss
 
 As sessões ficam na memória por até 12 horas e se perdem ao reiniciar. Avisos do sistema dependem do navegador e de permissão; a página deve permanecer aberta. Não há acompanhamento por GPS contínuo. Os convites são privados: quem tem o link pode ver os dados e agir como aquele participante.
 
-## Integração anterior do Google
+## Integração do Google
 
-O adaptador permanece isolado em `src/services/google-routes.js` para referência e testes. Por padrão ele bloqueia chamadas pagas; **não habilite `allowPaidRequests` em produção**. Os testes que usam esse parâmetro só trabalham com provedores controlados, sem enviar requisições ao Google.
+O adaptador em `src/services/google-routes.js` usa Google Routes v2 Compute Routes. O servidor só libera consultas quando a variável de ativação é exatamente `true`; adicionar a chave, sozinho, não é suficiente. As consultas incluem duração, distância e trânsito para carro. O corpo e os cabeçalhos de autenticação ficam no servidor. Não configure chaves no código ou em arquivos enviados ao GitHub.
 
-O contador anterior continua preservado em `.local/google-usage.json`; não apague esse histórico. Ele mede tentativas do aplicativo, não a fatura do Google. A chave salva no ambiente não é necessária enquanto o Google permanecer bloqueado.
+O contador fica em `.local/google-usage.json`; preserve esse histórico. Ele mede tentativas do aplicativo, não a fatura do Google. A chave salva neste ambiente não é transferida automaticamente ao Render.

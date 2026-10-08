@@ -13,3 +13,5 @@ services:
         value: 24.19.0
       - key: ROUTES_DAILY_LIMIT
         value: "0"
+      - key: GOOGLE_ROUTES_ENABLED
+        value: "false"

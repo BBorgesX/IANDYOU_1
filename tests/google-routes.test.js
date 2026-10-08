@@ -46,7 +46,7 @@ test('erros de acesso, quota, rede, rotas ausentes e duração inválida são ex
 test('padrão bloqueia Google mesmo com chave presente, antes de reservar quota ou consultar',async()=>{
  let calls=0,reservations=0;
  const route=createGoogleRoutes({apiKey:'test-only-key',budget:{reserve:async()=>{reservations++;}},fetchImpl:async()=>{calls++;throw new Error('Não pode consultar');}});
- await assert.rejects(()=>route({origin:'A',destination:'B',mode:'car',departureAt:Date.now()}),/bloqueadas para evitar cobranças/);
+ await assert.rejects(()=>route({origin:'A',destination:'B',mode:'car',departureAt:Date.now()}),/desativadas no servidor/);
  assert.equal(calls,0);
  assert.equal(reservations,0);
 });

@@ -23,7 +23,16 @@ async function readBody(req) {
   }
   try { return JSON.parse(body); } catch { throw Object.assign(new Error('Dados inválidos.'), { status: 400 }); }
 }
-export function createServer({ getRoute = createGoogleRoutes(), configured = false, budget = routeBudget } = {}) {
+export function createServer({ getRoute, configured, budget = routeBudget, environment = process.env, fetchImpl = fetch } = {}) {
+  const googleRoutesEnabled = environment.GOOGLE_ROUTES_ENABLED === 'true';
+  const apiKey = environment.GOOGLE_MAPS_API_KEY?.trim() ?? '';
+  configured ??= googleRoutesEnabled && Boolean(apiKey);
+  getRoute ??= createGoogleRoutes({
+    apiKey,
+    allowPaidRequests: googleRoutesEnabled,
+    budget,
+    fetchImpl,
+  });
   const store = createMeetingStore({ getRoute });
   const requests = new Map();
   return http.createServer(async (req, res) => {
@@ -44,7 +53,7 @@ export function createServer({ getRoute = createGoogleRoutes(), configured = fal
           entry.count++; requests.set(ip, entry);
           if (entry.count > 15) return json(res, 429, { error: 'Muitas consultas. Aguarde um minuto e tente novamente.' });
         }
-        if (url.pathname === '/api/config' && req.method === 'GET') return json(res, 200, { googleMapsConfigured: configured, paidGoogleDisabled: !configured, routeUsage: await budget.status() });
+        if (url.pathname === '/api/config' && req.method === 'GET') return json(res, 200, { googleMapsConfigured: configured, googleRoutesEnabled, paidGoogleDisabled: !configured, routeUsage: await budget.status() });
         if (url.pathname === '/api/meetings' && req.method === 'POST') {
           if ((await budget.status()).remaining < 2) return json(res, 429, { error: 'Saldo diário insuficiente para consultar os dois trajetos. Nenhuma consulta foi iniciada.' });
           return json(res, 201, await store.create(await readBody(req)));

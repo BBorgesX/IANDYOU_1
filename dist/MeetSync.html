@@ -140,10 +140,10 @@ async function refreshUsage() {
     const config = await api('/api/config');
     usage = config.routeUsage;
     if (config.paidGoogleDisabled) {
-      $('cost-status').textContent = 'Consultas pagas ao Google desativadas nesta versão. Não são enviados novos pedidos de rota ao Google.';
+      $('cost-status').textContent = 'Consultas ao Google indisponíveis. Nenhum novo pedido de rota é enviado enquanto a integração estiver desativada ou sem chave.';
       return config;
     }
-    if (usage) $('cost-status').textContent = `Consultas de rota hoje: ${usage.used}/${usage.limit}. Criar encontro usa 2; confirmar saída usa de 1 a 3. Ao atingir o limite, novas consultas são bloqueadas.`;
+    if (usage) $('cost-status').textContent = `Consultas de rota neste servidor hoje: ${usage.used}/${usage.limit}. Criar encontro usa 2; confirmar saída usa de 1 a 3. Configure também a cota no Google: este contador pode reiniciar com o servidor.`;
     return config;
   } catch (error) {
     $('cost-status').textContent = 'Não foi possível verificar o limite de consultas. Tente novamente antes de calcular trajetos.';
@@ -324,7 +324,7 @@ async function initialize() {
   try {
     const config = await refreshUsage();
     ready = config.googleMapsConfigured;
-    connection(ready ? 'Serviço de rotas configurado · calcule os trajetos para consultar o Google' : config.paidGoogleDisabled ? 'Google desativado para evitar cobranças. A alternativa gratuita de rotas ainda está em preparação.' : 'Rotas indisponíveis: o responsável precisa configurar a chave do Google Maps no servidor.', !ready);
+    connection(ready ? 'Serviço de rotas configurado · calcule os trajetos para consultar o Google' : config.googleRoutesEnabled ? 'Rotas indisponíveis: falta configurar a chave do Google Maps no servidor.' : 'Cálculo de rotas desativado pelo responsável para controlar custos.', !ready);
     const params = new URLSearchParams(location.hash.slice(1));
     if (params.has('meeting') && params.has('token')) {
       credential = params.get('token');
