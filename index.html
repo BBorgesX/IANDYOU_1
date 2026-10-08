@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#164b42">
+  <title>MeetSync — cheguem juntos</title>
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/" aria-label="MeetSync início"><span class="brand-mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19 19 5M5 5h14v14"/></svg></span> MeetSync<span class="brand-dot">.</span></a><span class="prototype">Rotas do Google Maps</span></header>
+  <main>
+    <section class="intro"><span class="eyebrow">DOIS CAMINHOS. UM ENCONTRO.</span><h1>Menos espera.<br>Mais tempo <em>juntos.</em></h1><p>Vocês saem de lugares diferentes. A gente ajuda a escolher a hora certa para chegar ao mesmo destino.</p></section>
+    <div class="workspace">
+      <section class="setup panel" aria-labelledby="setup-title">
+        <div class="section-heading"><span class="step">01</span><div><h2 id="setup-title">Planeje o encontro</h2><p>Defina o destino e os dois trajetos.</p></div></div>
+        <p id="connection-status" class="connection-status" role="status">Conectando ao serviço de rotas…</p>
+        <p id="cost-status" class="cost-status" role="status">Verificando o limite de consultas…</p>
+        <form id="meeting-form">
+          <label class="destination-label" for="destination">📍 Ponto de encontro fixo</label>
+          <input id="destination" name="destination" required maxlength="120" value="Shopping da Bahia, Salvador - BA" placeholder="Um lugar fácil de encontrar">
+          <p class="field-hint">Combinem este ponto. Assim ninguém sai procurando o outro.</p>
+          <div class="participants">
+            <fieldset><legend><span class="person-dot a">A</span> Primeiro trajeto</legend>
+              <label for="name-a">Nome</label><input id="name-a" required maxlength="40" value="Bruno" autocomplete="given-name">
+              <label for="origin-a">De onde sai?</label><input id="origin-a" required maxlength="120" value="Pituba, Salvador - BA" placeholder="Bairro ou endereço">
+              <label for="transport-a">Como vai?</label><select id="transport-a"><option value="car">🚗 Carro</option><option value="walk">🚶 A pé</option><option value="transit">🚇 Transporte público</option></select>
+              <p class="field-hint">Duração calculada pelo Google Maps.</p>
+            </fieldset>
+            <fieldset><legend><span class="person-dot b">B</span> Segundo trajeto</legend>
+              <label for="name-b">Nome</label><input id="name-b" required maxlength="40" value="Cleide">
+              <label for="origin-b">De onde sai?</label><input id="origin-b" required maxlength="120" value="Centro, Salvador - BA" placeholder="Bairro ou endereço">
+              <label for="transport-b">Como vai?</label><select id="transport-b"><option value="transit">🚇 Transporte público</option><option value="car">🚗 Carro</option><option value="walk">🚶 A pé</option></select>
+              <p class="field-hint">Duração calculada pelo Google Maps.</p>
+            </fieldset>
+          </div>
+          <label for="identity">Quem está criando o encontro?</label><select id="identity"><option value="0">Bruno</option><option value="1">Cleide</option></select>
+          <p id="form-error" class="error" role="alert"></p>
+          <button type="submit" class="primary" id="start-button">Calcular trajetos e criar encontro <span aria-hidden="true">→</span></button>
+          <p class="privacy">Sem rastreamento contínuo. Endereços são enviados ao Google para calcular rotas e ao servidor durante o encontro.</p>
+          <noscript><p class="error">Ative o JavaScript no navegador para calcular os horários de saída.</p></noscript>
+        </form>
+      </section>
+      <section class="result panel" aria-labelledby="result-title">
+        <div class="section-heading"><span class="step">02</span><div><h2 id="result-title">Seu plano de saída</h2><p id="plan-mode">Informe os endereços para calcular as rotas</p></div></div>
+        <div class="meeting-destination"><span class="eyebrow">VOCÊS SE ENCONTRAM EM</span><h3 id="result-destination">Seu ponto de encontro</h3><span class="fixed-badge">⌖ Ponto fixo</span></div>
+        <div class="route-visual" aria-hidden="true"><span class="route-origin a">A</span><span class="route-line"></span><span class="route-target">⌖</span><span class="route-line"></span><span class="route-origin b">B</span></div>
+        <div class="eta-cards"><div><span id="summary-a"></span><strong id="duration-a">—</strong></div><div><span id="summary-b"></span><strong id="duration-b">—</strong></div></div>
+        <div class="recommendation"><span class="eyebrow" id="recommendation-label">A PRIMEIRA SAÍDA</span><h3 id="first-departure">Prontos para se encontrar?</h3><p id="second-departure">O Google calcula os trajetos. Quando alguém confirmar a saída, a outra pessoa recebe o horário recomendado.</p></div>
+        <div id="countdown-block" class="countdown-block" hidden><span id="countdown-label"></span><strong id="countdown" role="timer" aria-live="off">00:00</strong></div>
+        <div class="arrival"><span>Chegada estimada dos dois</span><strong id="arrival-time">—</strong></div>
+        <div id="session-actions" hidden>
+          <p id="viewer-label" class="viewer-label"></p>
+          <button type="button" id="depart-button" class="primary">Estou saindo agora →</button>
+          <div id="invite-block" class="invite-block" hidden><label for="invite-link" id="invite-label">Convide a outra pessoa</label><input id="invite-link" readonly><button type="button" id="copy-invite" class="secondary">Copiar convite</button></div>
+          <a id="open-maps" class="maps-link" target="_blank" rel="noopener noreferrer">Abrir meu trajeto no Google Maps ↗</a>
+          <button type="button" id="notifications-button" class="secondary">Ativar aviso neste aparelho</button>
+          <p class="field-hint">Abra o convite no outro aparelho. Mantenham a página aberta para receber os avisos.</p>
+          <button type="button" id="end-button" class="text-button">Encerrar encontro para os dois</button>
+        </div>
+        <p id="live-status" class="session-status" role="status" aria-live="polite"></p>
+        <p class="result-note">Rotas atualizadas na confirmação de saída. Os tempos são estimativas do Google; trânsito e transporte podem mudar. Não há acompanhamento por GPS.</p>
+      </section>
+    </div>
+    <footer><span>Um ponto combinado, duas chegadas sincronizadas.</span><span>FEITO PARA SE ENCONTRAR</span></footer>
+  </main>
+  <script type="module" src="/src/app.js"></script>
+</body>
+</html>

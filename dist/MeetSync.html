@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#164b42">
+  <title>MeetSync — cheguem juntos</title>
+  <style>:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#193e36;background:#f6f7f2;font-synthesis:none}*{box-sizing:border-box}body{margin:0}.topbar{max-width:1200px;margin:auto;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #dfe4da}.brand{font-weight:800;font-size:25px;text-decoration:none;color:inherit;letter-spacing:-1px}.brand-mark{background:#164b42;color:#e5efb2;padding:2px 8px;border-radius:9px;margin-right:9px}.brand-dot{color:#799d42}.prototype{font-size:12px;background:#e9eee2;padding:8px 12px;border-radius:20px;color:#5a6b57}main{max-width:1200px;margin:auto;padding:44px 32px 20px}.eyebrow{font-size:10px;letter-spacing:1.8px;font-weight:800;color:#75845d}.intro{position:relative;max-width:650px;margin-bottom:34px}.intro h1{font-size:clamp(38px,5vw,59px);line-height:1.1;letter-spacing:-2.8px;margin:15px 0}.intro h1 em{font-family:Georgia,serif;font-weight:normal;color:#6d8a40}.intro p{max-width:480px;line-height:1.7;color:#6a766c;font-size:14px}.workspace{display:grid;grid-template-columns:1.15fr 1fr;gap:24px;align-items:start}.panel{border:1px solid #dde3d6;border-radius:20px;padding:27px;background:#fff}.section-heading{display:flex;gap:14px;align-items:center;margin-bottom:27px}.step{font-size:12px;background:#f1f4eb;border:1px solid #e1e6d9;padding:10px;border-radius:10px;color:#65804c}.section-heading h2{font-size:18px;margin:0 0 5px;letter-spacing:-.4px}.section-heading p{font-size:12px;color:#7c857c;margin:0}label{display:block;font-size:12px;font-weight:600;margin-bottom:7px}label span{color:#7b877b;font-weight:400}.destination-label{font-size:13px}input,select{font:inherit;font-size:13px;color:#29463e;background:#fbfcf9;border:1px solid #dfe5d8;border-radius:9px;width:100%;padding:12px;min-height:43px;margin-bottom:16px}input:focus,select:focus,button:focus-visible{outline:3px solid #cadb9d;outline-offset:2px}input:disabled,select:disabled{opacity:.75}.field-hint{font-size:11px;color:#788370;line-height:1.6;margin:-7px 0 22px}.participants{display:grid;grid-template-columns:1fr 1fr;gap:20px}fieldset{min-width:0;border:0;padding:0;margin:0}legend{font-size:12px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}.person-dot{display:inline-flex;width:25px;height:25px;border-radius:50%;align-items:center;justify-content:center;font-size:10px}.a{background:#dcebbb;color:#33562f}.b{background:#f5debb;color:#79562f}.primary{border:0;background:#164b42;color:white;width:100%;padding:15px;border-radius:10px;font:inherit;font-size:13px;font-weight:600;display:flex;justify-content:space-between;cursor:pointer}.primary:hover{background:#236456}.primary:disabled{opacity:.6;cursor:default}.privacy{font-size:10px;color:#92988c;text-align:center;margin:13px 0 0}.error{color:#ae4234;font-size:12px;margin:0 0 12px}.error:empty{display:none}.result{background:#f0f3e8}.meeting-destination{text-align:center}.meeting-destination h3{font-size:23px;letter-spacing:-.8px;margin:9px 0 12px;overflow-wrap:anywhere}.fixed-badge{background:#e4ead8;color:#708357;border-radius:20px;font-size:10px;padding:5px 10px}.route-visual{display:flex;align-items:center;margin:30px 22px 20px;gap:7px}.route-origin{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800}.route-line{flex:1;border-top:2px dashed #b8c79c}.route-target{background:#164b42;color:white;border-radius:12px;width:42px;height:42px;display:grid;place-items:center;font-size:25px}.eta-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}.eta-cards>div{padding:13px;background:#ffffff9c;border:1px solid #e3e8d8;border-radius:10px}.eta-cards span{display:block;font-size:11px;color:#697564;overflow-wrap:anywhere}.eta-cards strong{display:block;font-size:23px;margin-top:7px;letter-spacing:-1px}.recommendation{border-top:1px solid #dce3cd;padding-top:22px}.recommendation h3{font-size:25px;line-height:1.25;letter-spacing:-.8px;margin:10px 0;overflow-wrap:anywhere}.recommendation p{font-size:13px;line-height:1.6;color:#6c795e;margin:0}.arrival{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#e4ead7;padding:14px;border-radius:10px;margin-top:23px;font-size:11px}.arrival strong{font-size:17px}.result-note{font-size:10px;color:#818b75;line-height:1.7;margin:17px 0 0}.countdown-block{text-align:center;margin-top:20px}.countdown-block span{font-size:12px;color:#647656;display:block}.countdown-block strong{font-size:45px;letter-spacing:2px;font-variant-numeric:tabular-nums}.departure-actions{display:flex;gap:8px;margin-top:16px}.secondary{flex:1;background:white;border:1px solid #cbd6b6;border-radius:9px;font:inherit;font-size:11px;padding:12px;cursor:pointer}.secondary:disabled{opacity:.65;cursor:default}.text-button{display:block;margin:14px auto 0;background:none;border:none;text-decoration:underline;font:inherit;font-size:11px;color:#526c43;cursor:pointer}.session-status{font-size:12px;color:#356b47;line-height:1.6}.session-status:empty{display:none}footer{display:flex;justify-content:space-between;font-size:10px;color:#86907f;padding:28px 0;gap:14px}footer span:last-child{font-size:8px;letter-spacing:1.5px}[hidden]{display:none!important}@media(max-width:760px){.topbar{padding:22px 20px}.prototype{font-size:10px}main{padding:30px 20px 16px}.workspace{grid-template-columns:1fr}.panel{padding:22px}.intro h1{letter-spacing:-1.8px}.intro{margin-bottom:26px}footer{flex-direction:column}}@media(max-width:370px){.participants{grid-template-columns:1fr}.prototype{max-width:110px;text-align:center}.departure-actions{flex-direction:column}}
+.connection-status{font-size:12px;line-height:1.6;background:#e9efdf;padding:12px;border-radius:9px;margin:0 0 20px}.connection-status.unavailable{background:#fff1de;color:#735522}.viewer-label{font-size:13px;font-weight:600;margin:20px 0 12px}.invite-block{margin-top:20px;padding-top:16px;border-top:1px solid #d5dec6}.invite-block input{font-size:11px;margin-bottom:8px}.maps-link{display:block;color:#305e49;font-size:12px;margin:18px 0;text-underline-offset:3px}.arrival strong{font-size:14px;overflow-wrap:anywhere;text-align:right}.field-hint{margin-top:8px}#notifications-button{width:100%;margin-bottom:12px}#countdown{font-size:40px}#copy-invite{width:100%}.result{scroll-margin-top:20px}
+.cost-status{font-size:11px;line-height:1.7;color:#5d704d;border:1px solid #d6dfc6;padding:12px;border-radius:9px;margin:0 0 20px}
+</style>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="#" aria-label="MeetSync início"><span class="brand-mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19 19 5M5 5h14v14"/></svg></span> MeetSync<span class="brand-dot">.</span></a><span class="prototype">Rotas do Google Maps</span></header>
+  <main>
+    <section class="intro"><span class="eyebrow">DOIS CAMINHOS. UM ENCONTRO.</span><h1>Menos espera.<br>Mais tempo <em>juntos.</em></h1><p>Vocês saem de lugares diferentes. A gente ajuda a escolher a hora certa para chegar ao mesmo destino.</p></section>
+    <div class="workspace">
+      <section class="setup panel" aria-labelledby="setup-title">
+        <div class="section-heading"><span class="step">01</span><div><h2 id="setup-title">Planeje o encontro</h2><p>Defina o destino e os dois trajetos.</p></div></div>
+        <p id="connection-status" class="connection-status" role="status">Conectando ao serviço de rotas…</p>
+        <p id="cost-status" class="cost-status" role="status">Verificando o limite de consultas…</p>
+        <form id="meeting-form">
+          <label class="destination-label" for="destination">📍 Ponto de encontro fixo</label>
+          <input id="destination" name="destination" required maxlength="120" value="Shopping da Bahia, Salvador - BA" placeholder="Um lugar fácil de encontrar">
+          <p class="field-hint">Combinem este ponto. Assim ninguém sai procurando o outro.</p>
+          <div class="participants">
+            <fieldset><legend><span class="person-dot a">A</span> Primeiro trajeto</legend>
+              <label for="name-a">Nome</label><input id="name-a" required maxlength="40" value="Bruno" autocomplete="given-name">
+              <label for="origin-a">De onde sai?</label><input id="origin-a" required maxlength="120" value="Pituba, Salvador - BA" placeholder="Bairro ou endereço">
+              <label for="transport-a">Como vai?</label><select id="transport-a"><option value="car">🚗 Carro</option><option value="walk">🚶 A pé</option><option value="transit">🚇 Transporte público</option></select>
+              <p class="field-hint">Duração calculada pelo Google Maps.</p>
+            </fieldset>
+            <fieldset><legend><span class="person-dot b">B</span> Segundo trajeto</legend>
+              <label for="name-b">Nome</label><input id="name-b" required maxlength="40" value="Cleide">
+              <label for="origin-b">De onde sai?</label><input id="origin-b" required maxlength="120" value="Centro, Salvador - BA" placeholder="Bairro ou endereço">
+              <label for="transport-b">Como vai?</label><select id="transport-b"><option value="transit">🚇 Transporte público</option><option value="car">🚗 Carro</option><option value="walk">🚶 A pé</option></select>
+              <p class="field-hint">Duração calculada pelo Google Maps.</p>
+            </fieldset>
+          </div>
+          <label for="identity">Quem está criando o encontro?</label><select id="identity"><option value="0">Bruno</option><option value="1">Cleide</option></select>
+          <p id="form-error" class="error" role="alert"></p>
+          <button type="submit" class="primary" id="start-button">Calcular trajetos e criar encontro <span aria-hidden="true">→</span></button>
+          <p class="privacy">Sem rastreamento contínuo. Endereços são enviados ao Google para calcular rotas e ao servidor durante o encontro.</p>
+          <noscript><p class="error">Ative o JavaScript no navegador para calcular os horários de saída.</p></noscript>
+        </form>
+      </section>
+      <section class="result panel" aria-labelledby="result-title">
+        <div class="section-heading"><span class="step">02</span><div><h2 id="result-title">Seu plano de saída</h2><p id="plan-mode">Informe os endereços para calcular as rotas</p></div></div>
+        <div class="meeting-destination"><span class="eyebrow">VOCÊS SE ENCONTRAM EM</span><h3 id="result-destination">Seu ponto de encontro</h3><span class="fixed-badge">⌖ Ponto fixo</span></div>
+        <div class="route-visual" aria-hidden="true"><span class="route-origin a">A</span><span class="route-line"></span><span class="route-target">⌖</span><span class="route-line"></span><span class="route-origin b">B</span></div>
+        <div class="eta-cards"><div><span id="summary-a"></span><strong id="duration-a">—</strong></div><div><span id="summary-b"></span><strong id="duration-b">—</strong></div></div>
+        <div class="recommendation"><span class="eyebrow" id="recommendation-label">A PRIMEIRA SAÍDA</span><h3 id="first-departure">Prontos para se encontrar?</h3><p id="second-departure">O Google calcula os trajetos. Quando alguém confirmar a saída, a outra pessoa recebe o horário recomendado.</p></div>
+        <div id="countdown-block" class="countdown-block" hidden><span id="countdown-label"></span><strong id="countdown" role="timer" aria-live="off">00:00</strong></div>
+        <div class="arrival"><span>Chegada estimada dos dois</span><strong id="arrival-time">—</strong></div>
+        <div id="session-actions" hidden>
+          <p id="viewer-label" class="viewer-label"></p>
+          <button type="button" id="depart-button" class="primary">Estou saindo agora →</button>
+          <div id="invite-block" class="invite-block" hidden><label for="invite-link" id="invite-label">Convide a outra pessoa</label><input id="invite-link" readonly><button type="button" id="copy-invite" class="secondary">Copiar convite</button></div>
+          <a id="open-maps" class="maps-link" target="_blank" rel="noopener noreferrer">Abrir meu trajeto no Google Maps ↗</a>
+          <button type="button" id="notifications-button" class="secondary">Ativar aviso neste aparelho</button>
+          <p class="field-hint">Abra o convite no outro aparelho. Mantenham a página aberta para receber os avisos.</p>
+          <button type="button" id="end-button" class="text-button">Encerrar encontro para os dois</button>
+        </div>
+        <p id="live-status" class="session-status" role="status" aria-live="polite"></p>
+        <p class="result-note">Rotas atualizadas na confirmação de saída. Os tempos são estimativas do Google; trânsito e transporte podem mudar. Não há acompanhamento por GPS.</p>
+      </section>
+    </div>
+    <footer><span>Um ponto combinado, duas chegadas sincronizadas.</span><span>FEITO PARA SE ENCONTRAR</span></footer>
+  </main>
+  <script>
+(() => {
+function calculateSync(etaA, etaB) {
+  for (const eta of [etaA, etaB]) {
+    if (typeof eta !== 'number' || !Number.isFinite(eta) || eta <= 0 || eta > 1440) {
+      throw new RangeError('Informe tempos entre 1 e 1440 minutos.');
+    }
+  }
+  return {
+    firstParticipant: etaA === etaB ? 'BOTH' : etaA > etaB ? 'A' : 'B',
+    differenceMinutes: Math.abs(etaA - etaB),
+    departureOffsets: [Math.max(etaA, etaB) - etaA, Math.max(etaA, etaB) - etaB],
+    arrivalOffsetMinutes: Math.max(etaA, etaB),
+  };
+}
+
+function calculateDeparture(departedEta, waitingEta, departedAt, now) {
+  calculateSync(departedEta, waitingEta);
+  if (![departedAt, now].every(Number.isFinite)) throw new RangeError('Horário inválido.');
+  const expectedArrivalAt = departedAt + departedEta * 60000;
+  const departureAt = expectedArrivalAt - waitingEta * 60000;
+  return {
+    expectedArrivalAt,
+    departureAt,
+    remainingSeconds: Math.max(0, Math.ceil((departureAt - now) / 1000)),
+    delaySeconds: Math.max(0, Math.ceil((now - departureAt) / 1000)),
+  };
+}
+
+const $ = id => document.getElementById(id);
+const form = $('meeting-form');
+const modes = { car: '🚗 Carro', walk: '🚶 A pé', transit: '🚇 Transporte público' };
+const clock = timestamp => new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(timestamp);
+let session = null;
+let credential = null;
+let serverOffset = 0;
+let busy = false;
+let pollBusy = false;
+let ready = false;
+let invite = null;
+let notified = false;
+let timer = null;
+let poller = null;
+let usage = null;
+const status = text => { $('live-status').textContent = text; };
+
+async function api(path, body) {
+  const response = await fetch(path, {
+    method: body === undefined ? 'GET' : 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Meetsync-Client': '1', ...(credential ? { 'X-Meeting-Token': credential } : {}) },
+    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    signal: AbortSignal.timeout(55000),
+  });
+  let data;
+  try { data = await response.json(); } catch { throw new Error('Abra o MeetSync pelo servidor para conectar aos trajetos e ao encontro compartilhado.'); }
+  if (!response.ok) throw new Error(data.error || 'Não foi possível realizar esta ação.');
+  return data;
+}
+function planInput() {
+  const destination = $('destination').value.trim();
+  const participants = ['a', 'b'].map(key => ({ name: $(`name-${key}`).value.trim(), origin: $(`origin-${key}`).value.trim(), mode: $(`transport-${key}`).value }));
+  if (!destination || participants.some(p => !p.name || !p.origin)) throw new Error('Preencha o destino, os nomes e os endereços de origem.');
+  return { destination, participants };
+}
+function connection(text, unavailable = false) {
+  $('connection-status').textContent = text;
+  $('connection-status').classList.toggle('unavailable', unavailable);
+}
+async function refreshUsage() {
+  try {
+    const config = await api('/api/config');
+    usage = config.routeUsage;
+    if (config.paidGoogleDisabled) {
+      $('cost-status').textContent = 'Consultas pagas ao Google desativadas nesta versão. Não são enviados novos pedidos de rota ao Google.';
+      return config;
+    }
+    if (usage) $('cost-status').textContent = `Consultas de rota hoje: ${usage.used}/${usage.limit}. Criar encontro usa 2; confirmar saída usa de 1 a 3. Ao atingir o limite, novas consultas são bloqueadas.`;
+    return config;
+  } catch (error) {
+    $('cost-status').textContent = 'Não foi possível verificar o limite de consultas. Tente novamente antes de calcular trajetos.';
+    throw error;
+  }
+}
+function linkFor(id, viewer, token) {
+  const url = new URL(location.pathname, location.origin);
+  url.hash = new URLSearchParams({ meeting: id, token, viewer });
+  return url.href;
+}
+function setLocked(locked) { for (const control of form.elements) control.disabled = locked; }
+function accept(data) {
+  if (session && data.id === session.id && data.version < session.version) return;
+  session = data;
+  serverOffset = data.serverNow - Date.now();
+  $('result-destination').textContent = data.plan.destination;
+  data.plan.participants.forEach((p, i) => {
+    const key = ['a', 'b'][i];
+    $(`name-${key}`).value = p.name;
+    $(`origin-${key}`).value = p.origin;
+    $(`transport-${key}`).value = p.mode;
+    $(`summary-${key}`).textContent = `${p.name} · ${modes[p.mode]}`;
+    $(`duration-${key}`).textContent = `${Math.ceil(data.routes[i].durationSeconds / 60)} min`;
+  });
+  $('destination').value = data.plan.destination;
+  $('identity').options[0].textContent = data.plan.participants[0].name;
+  $('identity').options[1].textContent = data.plan.participants[1].name;
+  $('identity').value = String(data.viewer);
+  $('viewer-label').textContent = `Você está como ${data.plan.participants[data.viewer].name}`;
+  $('plan-mode').textContent = 'Encontro compartilhado · rotas do Google Maps';
+  const p = data.plan.participants[data.viewer];
+  const maps = new URL('https://www.google.com/maps/dir/');
+  maps.search = new URLSearchParams({ api: '1', origin: p.origin, destination: data.plan.destination, travelmode: { car: 'driving', walk: 'walking', transit: 'transit' }[p.mode] });
+  $('open-maps').href = maps.href;
+  setLocked(true);
+  $('start-button').textContent = 'Encontro criado';
+  $('session-actions').hidden = false;
+  $('invite-block').hidden = !invite;
+  if (invite) {
+    $('invite-link').value = invite;
+    $('invite-label').textContent = `Envie o convite para ${data.plan.participants[1 - data.viewer].name}`;
+  }
+  $('countdown-block').hidden = false;
+  tick();
+}
+function tick() {
+  if (!session) return;
+  const now = Date.now() + serverOffset;
+  const { plan, viewer, departedAt, arrivalAt, recommendedDepartureAt } = session;
+  const first = departedAt.findIndex(t => t !== null);
+  $('depart-button').disabled = busy || departedAt[viewer] !== null || session.status === 'ended';
+  $('end-button').disabled = busy || session.status === 'ended';
+  $('depart-button').textContent = busy ? 'Atualizando rotas do Google…' : departedAt[viewer] === null ? 'Estou saindo agora →' : `Você saiu às ${clock(departedAt[viewer])} ✓`;
+  if (session.status === 'ended') {
+    $('first-departure').textContent = 'Encontro encerrado.';
+    $('second-departure').textContent = 'A sessão foi encerrada para os dois participantes.';
+    $('countdown-block').hidden = true;
+    $('invite-block').hidden = true;
+    $('depart-button').hidden = true;
+    $('end-button').disabled = false;
+    $('end-button').textContent = 'Criar novo encontro';
+    status('Nenhuma atualização de saída será enviada nesta sessão.');
+    clearInterval(poller); clearInterval(timer);
+    return;
+  }
+  if (first === -1) {
+    const durations = session.routes.map(r => r.durationSeconds);
+    const diff = Math.ceil(Math.abs(durations[0] - durations[1]) / 60);
+    const index = durations[0] >= durations[1] ? 0 : 1;
+    $('recommendation-label').textContent = 'PLANO DE SAÍDA';
+    $('first-departure').textContent = diff === 0 ? 'Vocês podem sair juntos.' : `${plan.participants[index].name} sai primeiro.`;
+    $('second-departure').textContent = diff === 0 ? 'Os trajetos têm duração semelhante.' : `${plan.participants[1-index].name} aguarda aproximadamente ${diff} min após essa saída.`;
+    $('countdown-label').textContent = 'Aguardando a primeira pessoa confirmar a saída';
+    $('countdown').textContent = '—';
+    $('arrival-time').textContent = 'Aguardando saída';
+    return;
+  }
+  if (departedAt.every(t => t !== null)) {
+    $('recommendation-label').textContent = 'OS DOIS A CAMINHO';
+    $('first-departure').textContent = 'Encontro em andamento.';
+    const difference = Math.round(Math.abs(arrivalAt[0] - arrivalAt[1]) / 60000);
+    $('second-departure').textContent = difference < 1 ? 'Chegadas previstas no mesmo minuto.' : `Diferença prevista: ${difference} min. Quem chegar primeiro espera no ponto fixo.`;
+    $('arrival-time').textContent = `${plan.participants[0].name}: ${clock(arrivalAt[0])} · ${plan.participants[1].name}: ${clock(arrivalAt[1])}`;
+    $('countdown-block').hidden = true;
+    return;
+  }
+  const waiting = 1 - first;
+  const remaining = Math.max(0, Math.ceil((recommendedDepartureAt[waiting] - now) / 1000));
+  $('recommendation-label').textContent = 'SINCRONIZAÇÃO ATIVA';
+  $('first-departure').textContent = `${plan.participants[first].name} já saiu.`;
+  $('second-departure').textContent = remaining > 0 ? `${plan.participants[waiting].name} deve sair às ${clock(recommendedDepartureAt[waiting])}.` : `${plan.participants[waiting].name}, saia agora para o ponto combinado!`;
+  $('countdown-label').textContent = remaining > 0 ? `${plan.participants[waiting].name} sai em` : 'Hora de sair';
+  $('countdown').textContent = `${String(Math.floor(remaining / 60)).padStart(2,'0')}:${String(remaining % 60).padStart(2,'0')}`;
+  $('arrival-time').textContent = clock(arrivalAt[first]);
+  if (remaining === 0) {
+    const delay = Math.round(Math.max(0, now - recommendedDepartureAt[waiting]) / 60000);
+    status(delay > 0 ? `Saia agora. A chegada pode ficar aproximadamente ${delay} min depois da outra pessoa.` : `${plan.participants[waiting].name}, hora de sair!`);
+    if (viewer === waiting && !notified) {
+      notified = true;
+      if ('Notification' in window && Notification.permission === 'granted') new Notification('MeetSync — hora de sair', { body: `Vá para ${plan.destination}. ${plan.participants[first].name} já está a caminho.` });
+    }
+  }
+}
+function startUpdates() {
+  clearInterval(timer); clearInterval(poller);
+  timer = setInterval(tick, 1000);
+  poller = setInterval(async () => {
+    if (!session || busy || pollBusy || session.status === 'ended') return;
+    pollBusy = true;
+    try {
+      accept(await api(`/api/meetings/${session.id}`));
+      connection('Encontro conectado · atualizações automáticas entre os aparelhos');
+    } catch(error) { connection(`Atualização interrompida: ${error.message}`, true); }
+    finally { pollBusy = false; }
+  }, 2500);
+}
+form.addEventListener('input', () => {
+  ['a','b'].forEach((key,i) => { $('identity').options[i].textContent = $(`name-${key}`).value.trim() || `Pessoa ${key.toUpperCase()}`; });
+  $('form-error').textContent = '';
+});
+form.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (busy || session || !form.reportValidity()) return;
+  if (!ready) { $('form-error').textContent = 'O serviço de rotas precisa estar configurado e conectado para calcular os tempos reais.'; return; }
+  busy = true; setLocked(true); $('start-button').textContent = 'Calculando trajetos no Google…';
+  try {
+    await refreshUsage();
+    if (usage?.remaining < 2) throw new Error('Saldo diário insuficiente para calcular os dois trajetos. Nenhuma consulta foi iniciada.');
+    const viewer = Number($('identity').value);
+    const data = await api('/api/meetings', planInput());
+    credential = data.tokens[viewer];
+    data.viewer = viewer;
+    invite = linkFor(data.id, 1 - viewer, data.tokens[1 - viewer]);
+    history.replaceState(null,'', linkFor(data.id, viewer, credential));
+    try { sessionStorage.setItem(`invite-${data.id}`, invite); } catch {}
+    accept(data);
+    status('Envie o convite para a outra pessoa. Ao confirmar sua saída, o outro aparelho ativa a contagem automaticamente.');
+    startUpdates();
+    $('result-title').closest('section').scrollIntoView({behavior:'smooth',block:'start'});
+  } catch(error) {
+    $('form-error').textContent = error.message;
+    setLocked(false); $('start-button').textContent = 'Calcular trajetos e criar encontro →';
+  } finally { busy = false; tick(); refreshUsage().catch(() => {}); }
+});
+$('depart-button').addEventListener('click', async () => {
+  if (!session || busy || session.departedAt[session.viewer] !== null) return;
+  busy = true; tick(); status('Consultando as rotas atuais do Google Maps…');
+  try { accept(await api(`/api/meetings/${session.id}/depart`, {})); status('Saída confirmada. O outro aparelho recebe a atualização automaticamente.'); }
+  catch(error) { status(`${error.message} Sua saída não foi registrada; tente novamente.`); }
+  finally { busy = false; tick(); refreshUsage().catch(() => {}); }
+});
+$('copy-invite').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText($('invite-link').value); $('copy-invite').textContent = 'Convite copiado ✓'; }
+  catch { $('invite-link').focus(); $('invite-link').select(); status('Copie o link selecionado e envie à outra pessoa.'); }
+});
+$('notifications-button').addEventListener('click', async () => {
+  if (!('Notification' in window)) { status('Este navegador não oferece avisos. Acompanhe a contagem nesta página.'); return; }
+  try {
+    const permission = await Notification.requestPermission();
+    status(permission === 'granted' ? 'Avisos ativados. Mantenha esta página aberta.' : 'Aviso do sistema não autorizado. O aviso na página continua ativo.');
+  } catch { status('Avisos do sistema indisponíveis. Acompanhe esta página.'); }
+});
+$('end-button').addEventListener('click', async () => {
+  if (!session || busy) return;
+  if (session.status === 'ended') { location.href = location.pathname; return; }
+  busy = true; tick();
+  try { accept(await api(`/api/meetings/${session.id}/end`, {})); }
+  catch(error) { status(error.message); }
+  finally { busy = false; tick(); }
+});
+document.addEventListener('visibilitychange', () => { if(!document.hidden) tick(); });
+async function initialize() {
+  if (!['http:','https:'].includes(location.protocol)) {
+    connection('Esta versão com Google Maps e encontro compartilhado precisa ser aberta pelo endereço do servidor. Um arquivo local não conecta os aparelhos.', true);
+    return;
+  }
+  try {
+    const config = await refreshUsage();
+    ready = config.googleMapsConfigured;
+    connection(ready ? 'Serviço de rotas configurado · calcule os trajetos para consultar o Google' : config.paidGoogleDisabled ? 'Google desativado para evitar cobranças. A alternativa gratuita de rotas ainda está em preparação.' : 'Rotas indisponíveis: o responsável precisa configurar a chave do Google Maps no servidor.', !ready);
+    const params = new URLSearchParams(location.hash.slice(1));
+    if (params.has('meeting') && params.has('token')) {
+      credential = params.get('token');
+      try { invite = sessionStorage.getItem(`invite-${params.get('meeting')}`); } catch {}
+      accept(await api(`/api/meetings/${params.get('meeting')}`));
+      startUpdates();
+      status('Encontro conectado. Confirme apenas a sua saída; o outro participante recebe a atualização.');
+    }
+  } catch(error) { connection(error.message, true); }
+}
+initialize();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+import http from 'node:http';
+import { readFile } from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
+import { createGoogleRoutes } from './src/services/google-routes.js';
+import { createMeetingStore } from './src/meetings.js';
+import { routeBudget } from './src/services/route-budget.js';
+
+const files = new Map([
+  ['/', ['dist/MeetSync.html', 'text/html']],
+  ['/src/styles.css', ['src/styles.css', 'text/css']],
+  ['/src/app.js', ['src/app.js', 'text/javascript']],
+  ['/src/engine/synchronization.js', ['src/engine/synchronization.js', 'text/javascript']],
+]);
+function json(res, status, data) {
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+  res.end(JSON.stringify(data));
+}
+async function readBody(req) {
+  let body = '';
+  for await (const chunk of req) {
+    body += chunk;
+    if (Buffer.byteLength(body) > 8192) throw Object.assign(new Error('Dados excedem o limite permitido.'), { status: 413 });
+  }
+  try { return JSON.parse(body); } catch { throw Object.assign(new Error('Dados inválidos.'), { status: 400 }); }
+}
+export function createServer({ getRoute = createGoogleRoutes(), configured = false, budget = routeBudget } = {}) {
+  const store = createMeetingStore({ getRoute });
+  const requests = new Map();
+  return http.createServer(async (req, res) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    const url = new URL(req.url, 'http://localhost');
+    try {
+      if (url.pathname.startsWith('/api/')) {
+        if (req.method === 'POST') {
+          // Cabeçalho e JSON evitam acionamento do encontro por formulários externos.
+          if (req.headers['x-meetsync-client'] !== '1' || !req.headers['content-type']?.startsWith('application/json')) return json(res, 403, { error: 'Abra a aplicação para realizar esta ação.' });
+          const origin = req.headers.origin;
+          if (origin && new URL(origin).host !== req.headers.host) return json(res, 403, { error: 'Origem de requisição inválida.' });
+          const now = Date.now();
+          for (const [ip, entry] of requests) if (now > entry.until) requests.delete(ip);
+          const ip = req.socket.remoteAddress;
+          const entry = requests.get(ip) || { count: 0, until: now + 60000 };
+          entry.count++; requests.set(ip, entry);
+          if (entry.count > 15) return json(res, 429, { error: 'Muitas consultas. Aguarde um minuto e tente novamente.' });
+        }
+        if (url.pathname === '/api/config' && req.method === 'GET') return json(res, 200, { googleMapsConfigured: configured, paidGoogleDisabled: !configured, routeUsage: await budget.status() });
+        if (url.pathname === '/api/meetings' && req.method === 'POST') {
+          if ((await budget.status()).remaining < 2) return json(res, 429, { error: 'Saldo diário insuficiente para consultar os dois trajetos. Nenhuma consulta foi iniciada.' });
+          return json(res, 201, await store.create(await readBody(req)));
+        }
+        const match = /^\/api\/meetings\/([a-f0-9]{48})(?:\/(depart|end))?$/.exec(url.pathname);
+        if (match) {
+          const [, id, action] = match;
+          const credential = req.headers['x-meeting-token'];
+          if (!action && req.method === 'GET') return json(res, 200, store.get(id, credential));
+          if (action === 'depart' && req.method === 'POST') {
+            const state = store.get(id, credential);
+            const other = 1 - state.viewer;
+            const required = state.departedAt[state.viewer] !== null ? 0 : state.departedAt[other] !== null ? 1 : state.plan.participants[other].mode === 'walk' ? 2 : 3;
+            if ((await budget.status()).remaining < required) return json(res, 429, { error: `Saldo diário insuficiente: esta saída pode usar até ${required} consultas. Nenhuma consulta foi iniciada.` });
+            return json(res, 200, await store.depart(id, credential));
+          }
+          if (action === 'end' && req.method === 'POST') return json(res, 200, store.end(id, credential));
+        }
+        return json(res, 404, { error: 'Não encontrado.' });
+      }
+      const entry = files.get(url.pathname);
+      if (!entry || !['GET', 'HEAD'].includes(req.method)) return res.writeHead(404).end('Não encontrado');
+      const body = await readFile(new URL(entry[0], import.meta.url));
+      res.writeHead(200, { 'Content-Type': `${entry[1]}; charset=utf-8`, 'Cache-Control': 'no-store' });
+      res.end(req.method === 'HEAD' ? undefined : body);
+    } catch (error) { json(res, error.status || 500, { error: error.status ? error.message : 'Erro no servidor. Tente novamente.' }); }
+  });
+}
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const server = createServer();
+  server.on('error', error => {
+    console.error(error.code === 'EADDRINUSE' ? 'Porta ocupada. Use PORT=3002 npm start ou outra porta disponível.' : 'Não foi possível iniciar o servidor.');
+    process.exitCode = 1;
+  });
+  server.listen(Number(process.env.PORT || 3000), '0.0.0.0', () => console.log('MeetSync iniciado na porta', server.address().port));
+}
