@@ -1,40 +1,56 @@
-# MeetSync — Bruno e Cleide
+# MeetSync — IANDYOU_1
 
-Hospedagem: [publicar no Render](https://render.com/deploy?repo=https://github.com/BBorgesX/IANDYOU_1) usando o blueprint `render.yaml`. Ele configura o plano Free e mantém consultas Google bloqueadas na validação inicial. [Instruções e limitações](docs/RENDER.md).
+Protótipo 0.2 para combinar a chegada de Bruno e Cleide a um destino fixo, com convite privado para cada aparelho. [Publicar no Render](https://render.com/deploy?repo=https://github.com/BBorgesX/IANDYOU_1) · [Configuração do Google e controle de custo](docs/RENDER.md).
 
-Encontros com ponto fixo, convites privados e confirmação de saída entre dois aparelhos.
+## Fluxo do encontro
 
-## Estado atual e custo
+1. Quem convida escolhe o destino e informa somente sua origem e transporte. Pode autorizar **Usar meu GPS** ou digitar o endereço completo.
+2. A outra pessoa abre o convite privado e escolhe sua própria origem e transporte no próprio aparelho. A permissão de GPS é individual; negá-la mantém a entrada manual disponível.
+3. Cada pessoa confirma **Estou saindo agora** no seu aparelho. O outro recebe o horário recomendado de saída.
+4. A tela mostra previsões, diferença de chegada e o nome de quem deverá esperar. Antes de qualquer saída, a comparação é identificada como **se os dois saírem agora**.
+5. Posições novas de GPS são compartilhadas em janelas de 15 segundos; previsões são recalculadas a cada 2 minutos, dentro da cota. **Parar GPS** interrompe a localização neste aparelho; encerrar o encontro remove as posições compartilhadas e encerra o acompanhamento nos dois aparelhos.
 
-O protótipo calcula rotas automáticas de carro, caminhada e transporte público com Google Routes quando a integração está configurada. **Consultas ficam desativadas por padrão**, mesmo com chave presente. A ativação exige `GOOGLE_ROUTES_ENABLED=true`, `GOOGLE_MAPS_API_KEY` no servidor e saldo no limite `ROUTES_DAILY_LIMIT`. [Ativação e controle de custo no Render](docs/RENDER.md#ativar-google-maps-para-um-teste-pequeno).
+## Transportes e endereço
 
-Para o teste, configure cotas no projeto Google antes de liberar consultas. O contador local não é um limite de faturamento: no Render Free ele pode ser apagado após reiniciar ou publicar. A disponibilidade de ônibus e metrô depende dos dados do Google na região. Não há promessa de custo zero nem de acompanhamento contínuo por GPS.
+Cada pessoa escolhe **carro, Uber, ônibus ou metrô**. Uber usa a previsão de carro com trânsito, sem tempo de espera pelo motorista, tarifa ou reserva. Para ônibus e metrô, o app envia a preferência ao Google e verifica os veículos das alternativas retornadas. Uma rota incompatível não é apresentada como o transporte escolhido; disponibilidade depende das linhas e horários fornecidos pelo Google.
 
-A proteção se aplica ao servidor atualizado. O bloqueio não altera outras cópias do aplicativo nem aplicativos no mesmo projeto Google.
+Endereços podem ser digitados livremente. O autocompletar opcional do **Places API (New)** filtra locais no Brasil, começa após quatro caracteres e espera 700 ms após digitar. Permite seleção por mouse ou teclado; falha ou limite de sugestões preservam o endereço manual. IDs de lugares selecionados são usados nas consultas de rota; chaves ficam somente no servidor.
+
+## Custo e ativação
+
+As duas integrações ficam **desativadas por padrão**. Adicionar uma chave sozinho não ativa consultas.
+
+| Variável no servidor | Função |
+| --- | --- |
+| GOOGLE_MAPS_API_KEY | Chave autorizada para Routes API |
+| GOOGLE_ROUTES_ENABLED=true | Ativa consultas de rota |
+| ROUTES_DAILY_LIMIT=20 | Limite local de tentativas para teste |
+| ROUTE_REFRESH_SECONDS=120 | Intervalo mínimo entre cálculos automáticos |
+| GOOGLE_PLACES_ENABLED=true | Ativa sugestões, após habilitar Places API (New) |
+| PLACES_DAILY_LIMIT=20 | Limite local separado de sugestões |
+| GOOGLE_PLACES_API_KEY | Opcional: chave separada de Places; vazio usa a chave de Maps |
+
+Configure franquias e cotas no Google antes de ativar. Contadores locais limitam tentativas, inclusive falhas; não representam a fatura. No Render Free podem ser apagados após deploy/reinício, portanto não são garantia de custo zero. Ler o estado, observar o contador e enviar posições não chamam Google Routes. Atualizar previsões pode usar até duas consultas; mudar os dados pessoais usa uma; confirmar saída pode usar até três. O Blueprint mantém integrações desligadas e limites zero para a primeira publicação.
 
 ## Executar e validar
 
-Requer Node.js 24.5 ou superior. Nenhuma instalação de dependências:
+Requer **Node.js 24.5 ou superior**. Não há dependências de produção.
 
 ```sh
 npm start
-npm test
 npm run check
+npm test
 npm run build
 ```
 
-Porta padrão: 3000; `PORT=3002 npm start` usa outra porta. O servidor utiliza o proxy de rede do ambiente quando houver. `/api/config` informa `paidGoogleDisabled: true` enquanto a ativação estiver desligada ou não houver chave. `npm test` usa respostas controladas, incluindo a integração HTTP de carro e transporte público; os testes de bloqueio confirmam zero consultas com chave presente sem ativação, sem chave ou com limite zero.
+Porta padrão 3000; o Render fornece `PORT`. O servidor escuta em `0.0.0.0` e respeita o proxy de rede do ambiente. `/api/config` informa `prototypeVersion=0.2.0`, ativação e limites sem consultar Google ou expor chaves. Testes de API usam respostas controladas; nenhuma validação automatizada envia consultas reais ao Google.
 
-`dist/MeetSync.html` reúne a interface, mas o encontro entre aparelhos requer servidor. Não há publicação pública automática. Hospedagem gratuita e disponibilidade permanente não são garantias equivalentes; cada serviço tem suas próprias limitações.
+Com Chromium instalado, `npm run test:browser` valida o fluxo em dois contextos de navegador separados e tela de celular, usando Node e DevTools sem instalar bibliotecas. Para outro executável, configure `CHROME_BIN`. Verifica permissão de GPS concedida/negada, fallback manual, sugestões por teclado, dados individuais, saída compartilhada, mudança de posição, diferença de chegada e encerramento. Os dados de localização e as respostas do provedor são controlados; este teste não valida a chave ou a cobertura real do Google.
 
-## Funcionamento compartilhado já implementado
+`dist/MeetSync.html` reúne a interface; encontros entre aparelhos e rotas exigem o servidor. Uma chave salva no Codex não é transferida automaticamente ao Render. Para um serviço existente, publique **Manual Deploy → Deploy latest commit** e aguarde **Live**.
 
-Um encontro tem duas origens, destino fixo e transportes. Cada participante possui convite privado separado. A confirmação de saída é propagada por consulta de estado a cada 2,5 segundos. O contador usa horário do servidor. Sessões podem ser retomadas após recarregar a página e encerradas para os dois participantes.
+## Limitações do protótipo
 
-As sessões ficam na memória por até 12 horas e se perdem ao reiniciar. Avisos do sistema dependem do navegador e de permissão; a página deve permanecer aberta. Não há acompanhamento por GPS contínuo. Os convites são privados: quem tem o link pode ver os dados e agir como aquele participante.
+Encontros ficam na memória por até 12 horas e se perdem quando o servidor reinicia. Os convites são privados: quem tem o link pode ver os dados e agir como aquele participante. GPS requer HTTPS, consentimento no aparelho e página ativa; não há garantia de acompanhamento em segundo plano. Recarregar a página não reativa o GPS automaticamente. Posições antigas não são tratadas como GPS recente.
 
-## Integração do Google
-
-O adaptador em `src/services/google-routes.js` usa Google Routes v2 Compute Routes. O servidor só libera consultas quando a variável de ativação é exatamente `true`; adicionar a chave, sozinho, não é suficiente. As consultas incluem duração, distância e trânsito para carro. O corpo e os cabeçalhos de autenticação ficam no servidor. Não configure chaves no código ou em arquivos enviados ao GitHub.
-
-O contador fica em `.local/google-usage.json`; preserve esse histórico. Ele mede tentativas do aplicativo, não a fatura do Google. A chave salva neste ambiente não é transferida automaticamente ao Render.
+Sem GPS durante a viagem, o app conserva a previsão anterior; atualize o endereço manualmente para recalcular a partir de onde está. A confirmação de chegada real não é automática. Avisos do sistema dependem do navegador e da permissão. Render Free pode suspender serviços sem tráfego; não há garantia de disponibilidade permanente. Preserve `.local/google-usage.json` e `.local/google-places-usage.json` em ambientes onde exista disco persistente.

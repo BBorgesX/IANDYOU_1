@@ -56,7 +56,7 @@ test('API recusa criação sem saldo para duas rotas antes de chamar o provedor'
  let calls=0;
  const server=createServer({configured:true,budget,getRoute:async()=>{calls++;return {durationSeconds:100};}});
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));t.after(()=>server.close());
- const response=await fetch(`http://127.0.0.1:${server.address().port}/api/meetings`,{method:'POST',headers:{'Content-Type':'application/json','X-Meetsync-Client':'1'},body:'{}'});
+ const response=await fetch(`http://127.0.0.1:${server.address().port}/api/meetings`,{method:'POST',headers:{'Content-Type':'application/json','X-Meetsync-Client':'1'},body:JSON.stringify({destination:'Shopping',participants:[{name:'Bruno',origin:'Pituba',mode:'car'},{name:'Cleide',origin:'Centro',mode:'transit'}]})});
  assert.equal(response.status,429);
  assert.equal(calls,0);
 });

@@ -9,10 +9,13 @@ export function createRouteBudget({
   directory = new URL('../../.local/', import.meta.url),
   limit = Number(process.env.ROUTES_DAILY_LIMIT ?? 20),
   now = Date.now,
+  filename = 'google-usage.json',
 } = {}) {
   // O contador não contém endereços, tokens ou chaves. Falhas bloqueiam consultas.
-  const file = new URL('google-usage.json', directory);
-  const lock = new URL('google-usage.lock/', directory);
+  if (!/^[a-z-]+\.json$/.test(filename)) throw new BudgetError('Nome do contador inválido.');
+  const stem = filename.slice(0, -5);
+  const file = new URL(filename, directory);
+  const lock = new URL(stem + '.lock/', directory);
   if (!Number.isInteger(limit) || limit < 0 || limit > 1000) throw new BudgetError('ROUTES_DAILY_LIMIT deve ser um inteiro entre 0 e 1000.');
   async function transaction(amount) {
     let locked = false;
@@ -34,7 +37,7 @@ export function createRouteBudget({
       if (amount && state.used + amount > limit) throw new BudgetError(`Limite diário de ${limit} consultas atingido. Nenhuma nova consulta foi enviada ao Google.`, 429);
       if (amount) {
         state.used += amount;
-        const temporary = new URL(`google-usage-${randomBytes(8).toString('hex')}.tmp`, directory);
+        const temporary = new URL(`${stem}-${randomBytes(8).toString('hex')}.tmp`, directory);
         await writeFile(temporary, JSON.stringify(state), { mode: 0o600 });
         await rename(temporary, file);
       }
@@ -48,3 +51,4 @@ export function createRouteBudget({
 }
 
 export const routeBudget = createRouteBudget();
+export const placesBudget = createRouteBudget({ filename: 'google-places-usage.json', limit: Number(process.env.PLACES_DAILY_LIMIT ?? 0) });

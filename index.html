@@ -8,58 +8,72 @@
   <link rel="stylesheet" href="/src/styles.css">
 </head>
 <body>
-  <header class="topbar"><a class="brand" href="/" aria-label="MeetSync início"><span class="brand-mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19 19 5M5 5h14v14"/></svg></span> MeetSync<span class="brand-dot">.</span></a><span class="prototype">Rotas do Google Maps</span></header>
+  <header class="topbar"><a class="brand" href="/" aria-label="MeetSync início"><span class="brand-mark">↗</span> MeetSync<span class="brand-dot">.</span></a><span class="prototype">Rotas do Google Maps</span></header>
   <main>
-    <section class="intro"><span class="eyebrow">DOIS CAMINHOS. UM ENCONTRO.</span><h1>Menos espera.<br>Mais tempo <em>juntos.</em></h1><p>Vocês saem de lugares diferentes. A gente ajuda a escolher a hora certa para chegar ao mesmo destino.</p></section>
+    <section class="intro"><span class="eyebrow">DOIS CAMINHOS. UM ENCONTRO.</span><h1>Menos espera.<br>Mais tempo <em>juntos.</em></h1><p>Cada pessoa escolhe seu transporte e compartilha a localização se quiser. As previsões ajudam vocês a chegar ao mesmo destino.</p></section>
     <div class="workspace">
       <section class="setup panel" aria-labelledby="setup-title">
-        <div class="section-heading"><span class="step">01</span><div><h2 id="setup-title">Planeje o encontro</h2><p>Defina o destino e os dois trajetos.</p></div></div>
+        <div class="section-heading"><span class="step">01</span><div><h2 id="setup-title">Planeje o encontro</h2><p>Defina o destino e convide a outra pessoa.</p></div></div>
         <p id="connection-status" class="connection-status" role="status">Conectando ao serviço de rotas…</p>
         <p id="cost-status" class="cost-status" role="status">Verificando o limite de consultas…</p>
         <form id="meeting-form">
           <label class="destination-label" for="destination">📍 Ponto de encontro fixo</label>
-          <input id="destination" name="destination" required maxlength="120" value="Shopping da Bahia, Salvador - BA" placeholder="Um lugar fácil de encontrar">
-          <p class="field-hint">Combinem este ponto. Assim ninguém sai procurando o outro.</p>
+          <div class="address-field"><input id="destination" name="destination" required maxlength="200" value="Shopping da Bahia, Salvador - BA" placeholder="Um lugar fácil de encontrar" autocomplete="off"><div id="destination-suggestions" class="suggestions" hidden></div><p id="destination-hint" class="address-hint"></p></div>
+          <label for="identity">Quem está criando o encontro?</label><select id="identity"><option value="0">Bruno</option><option value="1">Cleide</option></select>
           <div class="participants">
-            <fieldset><legend><span class="person-dot a">A</span> Primeiro trajeto</legend>
+            <fieldset><legend><span class="person-dot a">A</span><span id="role-a">Seus dados</span></legend>
               <label for="name-a">Nome</label><input id="name-a" required maxlength="40" value="Bruno" autocomplete="given-name">
-              <label for="origin-a">De onde sai?</label><input id="origin-a" required maxlength="120" value="Pituba, Salvador - BA" placeholder="Bairro ou endereço">
-              <label for="transport-a">Como vai?</label><select id="transport-a"><option value="car">🚗 Carro</option><option value="walk">🚶 A pé</option><option value="transit">🚇 Transporte público</option></select>
-              <p class="field-hint">Duração calculada pelo Google Maps.</p>
+              <div id="origin-fields-a"><label for="origin-a">De onde você sai?</label><div class="address-field"><input id="origin-a" maxlength="200" placeholder="Endereço completo ou seu GPS" autocomplete="off"><div id="origin-a-suggestions" class="suggestions" hidden></div><p id="origin-a-hint" class="address-hint"></p></div>
+              <label for="transport-a">Como você vai?</label><select id="transport-a"><option value="car">🚗 Carro</option><option value="uber">🚕 Uber</option><option value="bus">🚌 Ônibus</option><option value="subway">🚇 Metrô</option></select></div>
+              <p id="participant-hint-a" class="field-hint"></p>
             </fieldset>
-            <fieldset><legend><span class="person-dot b">B</span> Segundo trajeto</legend>
+            <fieldset><legend><span class="person-dot b">B</span><span id="role-b">Quem você convida</span></legend>
               <label for="name-b">Nome</label><input id="name-b" required maxlength="40" value="Cleide">
-              <label for="origin-b">De onde sai?</label><input id="origin-b" required maxlength="120" value="Centro, Salvador - BA" placeholder="Bairro ou endereço">
-              <label for="transport-b">Como vai?</label><select id="transport-b"><option value="transit">🚇 Transporte público</option><option value="car">🚗 Carro</option><option value="walk">🚶 A pé</option></select>
-              <p class="field-hint">Duração calculada pelo Google Maps.</p>
+              <div id="origin-fields-b" hidden><label for="origin-b">De onde você sai?</label><div class="address-field"><input id="origin-b" maxlength="200" placeholder="Endereço completo ou seu GPS" autocomplete="off"><div id="origin-b-suggestions" class="suggestions" hidden></div><p id="origin-b-hint" class="address-hint"></p></div>
+              <label for="transport-b">Como você vai?</label><select id="transport-b"><option value="bus">🚌 Ônibus</option><option value="subway">🚇 Metrô</option><option value="car">🚗 Carro</option><option value="uber">🚕 Uber</option></select></div>
+              <p id="participant-hint-b" class="field-hint">A outra pessoa informa sua origem e escolhe o transporte no próprio aparelho.</p>
             </fieldset>
           </div>
-          <label for="identity">Quem está criando o encontro?</label><select id="identity"><option value="0">Bruno</option><option value="1">Cleide</option></select>
+          <div class="gps-controls"><button type="button" id="setup-gps" class="secondary">Usar meu GPS</button><button type="button" id="setup-stop-gps" class="secondary" hidden>Parar GPS</button></div>
+          <p id="setup-gps-status" class="field-hint" role="status">O GPS é opcional. Ao ativar, você compartilha sua posição com a outra pessoa durante este encontro.</p>
           <p id="form-error" class="error" role="alert"></p>
-          <button type="submit" class="primary" id="start-button">Calcular trajetos e criar encontro <span aria-hidden="true">→</span></button>
-          <p class="privacy">Sem rastreamento contínuo. Endereços são enviados ao Google para calcular rotas e ao servidor durante o encontro.</p>
-          <noscript><p class="error">Ative o JavaScript no navegador para calcular os horários de saída.</p></noscript>
+          <button type="submit" class="primary" id="start-button">Criar encontro e convite <span aria-hidden="true">→</span></button>
+          <p class="privacy">Cada aparelho autoriza seu próprio GPS. Endereços e posições autorizadas são enviados ao servidor e ao Google para calcular rotas.</p>
+          <noscript><p class="error">Ative o JavaScript no navegador para usar o encontro.</p></noscript>
         </form>
       </section>
       <section class="result panel" aria-labelledby="result-title">
-        <div class="section-heading"><span class="step">02</span><div><h2 id="result-title">Seu plano de saída</h2><p id="plan-mode">Informe os endereços para calcular as rotas</p></div></div>
+        <div class="section-heading"><span class="step">02</span><div><h2 id="result-title">Seu plano de saída</h2><p id="plan-mode">Convide a outra pessoa para combinar as chegadas</p></div></div>
         <div class="meeting-destination"><span class="eyebrow">VOCÊS SE ENCONTRAM EM</span><h3 id="result-destination">Seu ponto de encontro</h3><span class="fixed-badge">⌖ Ponto fixo</span></div>
         <div class="route-visual" aria-hidden="true"><span class="route-origin a">A</span><span class="route-line"></span><span class="route-target">⌖</span><span class="route-line"></span><span class="route-origin b">B</span></div>
-        <div class="eta-cards"><div><span id="summary-a"></span><strong id="duration-a">—</strong></div><div><span id="summary-b"></span><strong id="duration-b">—</strong></div></div>
-        <div class="recommendation"><span class="eyebrow" id="recommendation-label">A PRIMEIRA SAÍDA</span><h3 id="first-departure">Prontos para se encontrar?</h3><p id="second-departure">O Google calcula os trajetos. Quando alguém confirmar a saída, a outra pessoa recebe o horário recomendado.</p></div>
+        <div class="eta-cards"><div><span id="summary-a">Bruno</span><strong id="duration-a">—</strong><small id="route-note-a"></small></div><div><span id="summary-b">Cleide</span><strong id="duration-b">—</strong><small id="route-note-b"></small></div></div>
+        <div id="comparison-block" class="comparison" hidden><span class="eyebrow" id="comparison-label">DIFERENÇA DE CHEGADA</span><strong id="arrival-difference">—</strong><p id="waiting-person"></p></div>
+        <div class="recommendation"><span class="eyebrow" id="recommendation-label">A PRIMEIRA SAÍDA</span><h3 id="first-departure">Prontos para se encontrar?</h3><p id="second-departure">Crie o convite. Cada pessoa confirma sua origem e seu transporte no próprio aparelho.</p></div>
         <div id="countdown-block" class="countdown-block" hidden><span id="countdown-label"></span><strong id="countdown" role="timer" aria-live="off">00:00</strong></div>
-        <div class="arrival"><span>Chegada estimada dos dois</span><strong id="arrival-time">—</strong></div>
+        <div class="arrival"><span>Chegadas estimadas</span><strong id="arrival-time">—</strong></div>
         <div id="session-actions" hidden>
           <p id="viewer-label" class="viewer-label"></p>
-          <button type="button" id="depart-button" class="primary">Estou saindo agora →</button>
           <div id="invite-block" class="invite-block" hidden><label for="invite-link" id="invite-label">Convide a outra pessoa</label><input id="invite-link" readonly><button type="button" id="copy-invite" class="secondary">Copiar convite</button></div>
+          <form id="participant-form" class="personal-form">
+            <h3 id="personal-title">Sua origem e seu transporte</h3>
+            <label for="my-origin">Seu endereço de saída ou posição atual</label><div class="address-field"><input id="my-origin" maxlength="200" placeholder="Digite o endereço se não usar GPS" autocomplete="off"><div id="my-origin-suggestions" class="suggestions" hidden></div><p id="my-origin-hint" class="address-hint"></p></div>
+            <label for="my-transport">Como você vai?</label><select id="my-transport" required><option value="">Escolha seu transporte</option><option value="car">🚗 Carro</option><option value="uber">🚕 Uber</option><option value="bus">🚌 Ônibus</option><option value="subway">🚇 Metrô</option></select>
+            <div class="gps-controls"><button type="button" id="personal-gps" class="secondary">Usar meu GPS</button><button type="button" id="personal-stop-gps" class="secondary" hidden>Parar GPS</button></div>
+            <p id="personal-gps-status" class="field-hint" role="status">GPS opcional: este aparelho precisa da sua autorização. Sua posição será compartilhada com a outra pessoa.</p>
+            <p id="personal-error" class="error" role="alert"></p>
+            <button type="submit" id="save-profile" class="secondary">Confirmar minha origem e meu transporte</button>
+            <p class="field-hint">Alterar origem ou transporte consulta uma nova rota. Uber usa a previsão de carro, sem a espera pelo motorista.</p>
+          </form>
+          <button type="button" id="depart-button" class="primary">Estou saindo agora →</button>
+          <button type="button" id="refresh-button" class="secondary">Atualizar previsões</button>
+          <p id="refresh-status" class="field-hint" role="status"></p>
           <a id="open-maps" class="maps-link" target="_blank" rel="noopener noreferrer">Abrir meu trajeto no Google Maps ↗</a>
           <button type="button" id="notifications-button" class="secondary">Ativar aviso neste aparelho</button>
-          <p class="field-hint">Abra o convite no outro aparelho. Mantenham a página aberta para receber os avisos.</p>
+          <p class="field-hint">Mantenham a página aberta para receber posições e previsões. Sem GPS, atualize manualmente seu endereço durante o trajeto.</p>
           <button type="button" id="end-button" class="text-button">Encerrar encontro para os dois</button>
         </div>
         <p id="live-status" class="session-status" role="status" aria-live="polite"></p>
-        <p class="result-note">Rotas atualizadas na confirmação de saída. Os tempos são estimativas do Google; trânsito e transporte podem mudar. Não há acompanhamento por GPS.</p>
+        <p class="result-note">Previsões recalculadas a cada 2 minutos, dentro da cota. GPS depende da permissão de cada aparelho e da página ativa. Ônibus e metrô dependem dos horários e linhas disponíveis no Google.</p>
       </section>
     </div>
     <footer><span>Um ponto combinado, duas chegadas sincronizadas.</span><span>FEITO PARA SE ENCONTRAR</span></footer>

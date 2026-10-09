@@ -1,6 +1,6 @@
 {
   "name": "meetsync",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,8 @@
     "prestart": "npm run build",
     "start": "node --use-env-proxy --env-file-if-exists=.env server.js",
     "test": "node --test",
-    "check": "node --check server.js && node --check scripts/build.js && node --check src/app.js && node --check src/meetings.js && node --check src/services/google-routes.js && node --check src/engine/synchronization.js && node --check src/services/route-budget.js"
+    "test:browser": "node scripts/browser-check.mjs",
+    "check": "node --check server.js && node --check scripts/build.js && node --check src/app.js && node --check src/meetings.js && node --check src/location.js && node --check src/services/google-places.js && node --check src/services/google-routes.js && node --check src/engine/synchronization.js && node --check src/services/route-budget.js"
   },
   "engines": {
     "node": ">=24.5"

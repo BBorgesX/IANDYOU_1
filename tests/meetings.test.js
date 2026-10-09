@@ -52,9 +52,10 @@ test('encerrar é propagado e impede nova saída; sessão expira',async()=>{
  assert.throws(()=>store.get(m.id,m.tokens[0]),e=>e.status===404);
 });
 test('não permite encerrar durante uma consulta e depois ressuscitar a sessão',async()=>{
- let resolve, pending=false;
+ let resolve, pending=false, started;
+ const requestStarted=new Promise(r=>{started=r;});
  const store=createMeetingStore({getRoute:async input=>{
-  if(pending) await new Promise(r=>{resolve=r;});
+  if(pending) await new Promise(r=>{resolve=r;started();});
   return fixture(input);
  }});
  const m=await store.create(plan);
@@ -62,6 +63,7 @@ test('não permite encerrar durante uma consulta e depois ressuscitar a sessão'
  await store.depart(m.id,m.tokens[0]);
  pending=true;
  const departing=store.depart(m.id,m.tokens[1]);
+ await requestStarted;
  store.end(m.id,m.tokens[0]);
  resolve();
  await assert.rejects(()=>departing,e=>e.status===409);

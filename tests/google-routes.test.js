@@ -50,3 +50,28 @@ test('padrão bloqueia Google mesmo com chave presente, antes de reservar quota 
  assert.equal(calls,0);
  assert.equal(reservations,0);
 });
+
+test('GPS, Uber, ônibus e metrô enviam pontos e filtros próprios ao Google', async () => {
+ for (const mode of ['uber', 'bus', 'subway']) {
+  let request;
+  const route = createGoogleRoutes({ allowPaidRequests: true, apiKey: 'test-only-key', budget: { reserve: async () => {} }, fetchImpl: async (_, options) => {
+   request = JSON.parse(options.body);
+   return new Response(JSON.stringify({ routes: [{ duration: '900s', legs: [{ steps: [{ transitDetails: { transitLine: { vehicle: { type: mode === 'bus' ? 'BUS' : 'SUBWAY' } } } }] }] }] }));
+  } });
+  const result = await route({ origin: '', location: { latitude: -12.98, longitude: -38.45 }, destination: 'Shopping', destinationPlaceId: 'place-id', mode, departureAt: Date.now() });
+  assert.deepEqual(request.origin, { location: { latLng: { latitude: -12.98, longitude: -38.45 } } });
+  assert.deepEqual(request.destination, { placeId: 'place-id' });
+  if (mode === 'uber') { assert.equal(request.travelMode, 'DRIVE'); assert.equal(request.routingPreference, 'TRAFFIC_AWARE'); assert.match(result.note, /motorista/); }
+  else { assert.equal(request.travelMode, 'TRANSIT'); assert.deepEqual(request.transitPreferences.allowedTravelModes, [mode === 'bus' ? 'BUS' : 'SUBWAY']); }
+ }
+});
+
+test('metrô não aceita silenciosamente trajeto de ônibus; alternativa compatível é selecionada', async () => {
+ const candidate = type => ({ duration: '900s', legs: [{ steps: [{ transitDetails: { transitLine: { vehicle: { type } } } }] }] });
+ const options = { allowPaidRequests: true, apiKey: 'test-only-key', budget: { reserve: async () => {} } };
+ const input = { origin: 'A', destination: 'B', mode: 'subway', departureAt: Date.now() };
+ const wrong = createGoogleRoutes({ ...options, fetchImpl: async () => new Response(JSON.stringify({ routes: [candidate('BUS')] })) });
+ await assert.rejects(() => wrong(input), /compatível com metrô/);
+ const alternative = createGoogleRoutes({ ...options, fetchImpl: async () => new Response(JSON.stringify({ routes: [candidate('BUS'), { ...candidate('SUBWAY'), duration: '1200s' }] })) });
+ assert.equal((await alternative(input)).durationSeconds, 1200);
+});

@@ -67,3 +67,34 @@ Para interromper consultas, configure `GOOGLE_ROUTES_ENABLED=false` ou `ROUTES_D
 ## Teste com Bruno e Cleide
 
 Abra o endereço `.onrender.com`, preencha endereços completos com cidade, destino comum e transportes. Crie o encontro como Bruno, envie o convite privado para Cleide e abra esse convite no outro aparelho. Confirme **Estou saindo agora** apenas no aparelho da pessoa que saiu. O outro aparelho recebe automaticamente a atualização e o horário recomendado de saída. Transporte público depende das rotas e horários disponíveis no Google para a região.
+
+## Atualização 0.2 — GPS individual e sugestões de endereço
+
+A criação exige somente a origem de quem convida. Quem recebe o convite escolhe carro, Uber, ônibus ou metrô e confirma a própria origem no seu aparelho. Pode usar **Usar meu GPS**, autorizando o navegador, ou digitar o endereço. Negar o GPS não impede o uso manual. Cada token só pode alterar os dados e a localização do seu próprio participante.
+
+O GPS usa a API de localização do navegador, em HTTPS. Ativá-lo é opcional e compartilha a posição com a outra pessoa. Há um botão **Parar GPS**. Encerrar o encontro remove as posições compartilhadas e interrompe os observadores nos aparelhos conectados. Recarregar a página não reativa GPS automaticamente: autorize novamente pelo botão. O funcionamento em segundo plano depende do navegador; mantenha a página ativa.
+
+Durante o encontro, posições novas são enviadas em janelas de 15 segundos. As rotas são recalculadas a cada **120 segundos**, compartilhando a mesma janela no servidor para que duas páginas não dupliquem a consulta. Cada atualização pode consultar até duas rotas e consome a cota de Routes. Alterar origem ou transporte consulta uma rota; confirmar saída pode usar até três. Se a cota acabar, as últimas previsões continuam visíveis e novas consultas ficam bloqueadas. A leitura do estado a cada 2,5 segundos não consulta Google.
+
+Na viagem, um GPS antigo não é tratado como posição atual. Sem GPS, o app preserva a previsão anterior em vez de somar novamente todo o trajeto a cada atualização. Informe manualmente seu endereço atual quando precisar de uma nova previsão durante o caminho. A diferença de chegada indica pelo nome quem deve esperar; antes da primeira saída, a comparação é explicitamente **se os dois saírem agora**.
+
+**Uber:** previsão de carro com trânsito; não inclui espera pelo motorista, tarifa ou reserva da corrida. **Ônibus/metrô:** a API prioriza o modo solicitado; o app verifica os veículos retornados e seleciona uma alternativa compatível. Se o Google só retornar outro transporte ou um percurso misto incompatível, informa que não há rota compatível, sem apresentar aquela previsão como ônibus ou metrô.
+
+### Ativar o autocompletar do Google
+
+O endereço manual continua funcionando sem sugestões. O autocompletar usa **Places API (New)**, separada de Routes API, com chamadas e cota próprias.
+
+1. No mesmo projeto Google, habilite [Places API (New)](https://console.cloud.google.com/apis/library/places.googleapis.com).
+2. Nas restrições da chave usada no Render, permita **Routes API** e **Places API (New)**. Opcionalmente, mantenha chaves separadas: adicione `GOOGLE_PLACES_API_KEY` no Render, autorizada somente para Places API (New). Se essa variável estiver vazia, o servidor usa `GOOGLE_MAPS_API_KEY`. No ambiente Codex, uma chave enviada pelo proxy precisa estar vinculada especificamente ao destino `places.googleapis.com`.
+3. Verifique a franquia e ajuste as cotas de Places no Google. A [tabela oficial](https://developers.google.com/maps/billing-and-pricing/pricing), consultada em 09/10/2026, lista **10.000 Autocomplete Requests gratuitos por mês**, agregados por conta de faturamento. Cada chamada de sugestões conta separadamente; o app não faz Place Details e não promete cobrança por sessão. Alertas de orçamento não bloqueiam gastos.
+4. No Render → Environment, adicione:
+
+| Variável | Valor para o teste |
+| --- | --- |
+| GOOGLE_PLACES_ENABLED | true |
+| PLACES_DAILY_LIMIT | 20 |
+| ROUTE_REFRESH_SECONDS | 120 |
+
+5. Salve e use **Manual Deploy → Deploy latest commit**. Em `/api/config`, verifique `prototypeVersion=0.2.0`, `placesConfigured=true` e `placesUsage.limit=20`. Este endpoint verifica configuração local, sem validar a chave no Google e sem consumir consultas.
+
+As sugestões filtram locais no Brasil, começam com pelo menos quatro caracteres e aguardam 700 ms após a digitação. É possível selecionar com o mouse ou com as teclas de setas e Enter. Falhas, saldo zero ou integração desligada preservam a entrada manual. O Blueprint mantém `GOOGLE_PLACES_ENABLED=false` e `PLACES_DAILY_LIMIT=0` na instalação inicial para evitar ativação acidental. O contador Places tem as mesmas limitações do disco temporário do Render: não é um teto de fatura da conta Google.

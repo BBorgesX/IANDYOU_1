@@ -3,13 +3,15 @@ import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { createGoogleRoutes } from './src/services/google-routes.js';
 import { createMeetingStore } from './src/meetings.js';
-import { routeBudget } from './src/services/route-budget.js';
+import { routeBudget, placesBudget } from './src/services/route-budget.js';
+import { createGooglePlaces } from './src/services/google-places.js';
 
 const files = new Map([
   ['/', ['dist/MeetSync.html', 'text/html']],
   ['/src/styles.css', ['src/styles.css', 'text/css']],
   ['/src/app.js', ['src/app.js', 'text/javascript']],
   ['/src/engine/synchronization.js', ['src/engine/synchronization.js', 'text/javascript']],
+  ['/src/google-attribution.png', ['src/google-attribution.png', 'image/png']],
 ]);
 function json(res, status, data) {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
@@ -23,7 +25,8 @@ async function readBody(req) {
   }
   try { return JSON.parse(body); } catch { throw Object.assign(new Error('Dados inválidos.'), { status: 400 }); }
 }
-export function createServer({ getRoute, configured, budget = routeBudget, environment = process.env, fetchImpl = fetch } = {}) {
+export function createServer({ getRoute, configured, budget = routeBudget, environment = process.env, fetchImpl = fetch,
+  getPredictions, placesConfigured, autocompleteBudget = placesBudget, refreshIntervalMs } = {}) {
   const googleRoutesEnabled = environment.GOOGLE_ROUTES_ENABLED === 'true';
   const apiKey = environment.GOOGLE_MAPS_API_KEY?.trim() ?? '';
   configured ??= googleRoutesEnabled && Boolean(apiKey);
@@ -33,7 +36,14 @@ export function createServer({ getRoute, configured, budget = routeBudget, envir
     budget,
     fetchImpl,
   });
-  const store = createMeetingStore({ getRoute });
+  const placesEnabled = environment.GOOGLE_PLACES_ENABLED === 'true';
+  const placesKey = environment.GOOGLE_PLACES_API_KEY?.trim() || apiKey;
+  placesConfigured ??= placesEnabled && Boolean(placesKey);
+  getPredictions ??= createGooglePlaces({ apiKey: placesKey, enabled: placesEnabled, budget: autocompleteBudget, fetchImpl });
+  const refreshSeconds = Math.max(120, Math.min(3600, Number.parseInt(environment.ROUTE_REFRESH_SECONDS ?? '120', 10) || 120));
+  const store = createMeetingStore({ getRoute, refreshIntervalMs: refreshIntervalMs ?? refreshSeconds * 1000, beforeRoutes: async count => {
+    if (count && (await budget.status()).remaining < count) throw Object.assign(new Error('Saldo diário insuficiente para até ' + count + ' consultas. Nenhuma consulta foi iniciada.'), { status: 429 });
+  } });
   const requests = new Map();
   return http.createServer(async (req, res) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -53,23 +63,29 @@ export function createServer({ getRoute, configured, budget = routeBudget, envir
           entry.count++; requests.set(ip, entry);
           if (entry.count > 15) return json(res, 429, { error: 'Muitas consultas. Aguarde um minuto e tente novamente.' });
         }
-        if (url.pathname === '/api/config' && req.method === 'GET') return json(res, 200, { googleMapsConfigured: configured, googleRoutesEnabled, paidGoogleDisabled: !configured, routeUsage: await budget.status() });
+        if (url.pathname === '/api/config' && req.method === 'GET') return json(res, 200, {
+          prototypeVersion: '0.2.0',
+          googleMapsConfigured: configured, googleRoutesEnabled, paidGoogleDisabled: !configured, routeUsage: await budget.status(),
+          placesConfigured, placesUsage: await autocompleteBudget.status(), routeRefreshSeconds: refreshSeconds,
+        });
+        if (url.pathname === '/api/places/autocomplete' && req.method === 'POST') {
+          const input = await readBody(req);
+          return json(res, 200, { predictions: await getPredictions(input.input) });
+        }
         if (url.pathname === '/api/meetings' && req.method === 'POST') {
-          if ((await budget.status()).remaining < 2) return json(res, 429, { error: 'Saldo diário insuficiente para consultar os dois trajetos. Nenhuma consulta foi iniciada.' });
           return json(res, 201, await store.create(await readBody(req)));
         }
-        const match = /^\/api\/meetings\/([a-f0-9]{48})(?:\/(depart|end))?$/.exec(url.pathname);
+        const match = /^\/api\/meetings\/([a-f0-9]{48})(?:\/(depart|end|profile|location|refresh))?$/.exec(url.pathname);
         if (match) {
           const [, id, action] = match;
           const credential = req.headers['x-meeting-token'];
           if (!action && req.method === 'GET') return json(res, 200, store.get(id, credential));
           if (action === 'depart' && req.method === 'POST') {
-            const state = store.get(id, credential);
-            const other = 1 - state.viewer;
-            const required = state.departedAt[state.viewer] !== null ? 0 : state.departedAt[other] !== null ? 1 : state.plan.participants[other].mode === 'walk' ? 2 : 3;
-            if ((await budget.status()).remaining < required) return json(res, 429, { error: `Saldo diário insuficiente: esta saída pode usar até ${required} consultas. Nenhuma consulta foi iniciada.` });
             return json(res, 200, await store.depart(id, credential));
           }
+          if (action === 'profile' && req.method === 'POST') return json(res, 200, await store.profile(id, credential, await readBody(req)));
+          if (action === 'location' && req.method === 'POST') return json(res, 200, store.location(id, credential, await readBody(req)));
+          if (action === 'refresh' && req.method === 'POST') return json(res, 200, await store.refresh(id, credential));
           if (action === 'end' && req.method === 'POST') return json(res, 200, store.end(id, credential));
         }
         return json(res, 404, { error: 'Não encontrado.' });

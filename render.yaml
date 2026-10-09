@@ -15,3 +15,9 @@ services:
         value: "0"
       - key: GOOGLE_ROUTES_ENABLED
         value: "false"
+      - key: ROUTE_REFRESH_SECONDS
+        value: "120"
+      - key: GOOGLE_PLACES_ENABLED
+        value: "false"
+      - key: PLACES_DAILY_LIMIT
+        value: "0"
